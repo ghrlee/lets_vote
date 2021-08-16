@@ -11,7 +11,7 @@ module Twilio
     end
 
     def call
-      client.message.create(
+      client.messages.create(
         from: @twilio_number,
         body: @message,
         to: @recipient
