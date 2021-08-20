@@ -12,8 +12,7 @@ module Tell
     def call
       message = <<~EOS
         MENU - This Menu\n
-        VOTE - Vote in a poll\n
-        
+        VOTE - Vote in a poll\n   
       EOS
 
       Twilio::SendMessage.call(@twilio_number, @recipient, message)

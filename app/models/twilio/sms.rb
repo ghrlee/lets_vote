@@ -12,10 +12,14 @@ module Twilio
       case body.upcase.strip
       when 'MENU'
         Tell::Menu.call(twilio_number, recipient)
+      when 'JOKE'
+        Tell::Joke.call(twilio_number, recipient)
       when 'VOTE'
-        Tell::Vote.call(twilio_number, recipient)
+        Vote::Start.call(twilio_number, recipient)
       when 'EXIT'
+        Vote::Exit.call(twilio_number, recipient)
       else
+        Vote::Play.call(twilio_number, recipient)
       end
     end
 

@@ -1,0 +1,2 @@
+class SmsConversation < ApplicationRecord
+end
