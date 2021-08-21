@@ -14,7 +14,6 @@ module Twilio
         Tell::Menu.call(twilio_number, recipient)
       when 'JOKE'
         Tell::Joke.call(twilio_number, recipient)
-      end
       when 'VOTE'
         Vote::Start.call(twilio_number, recipient)
       when 'EXIT'
