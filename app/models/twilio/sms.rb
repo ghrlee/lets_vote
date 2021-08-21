@@ -15,13 +15,13 @@ module Twilio
       when 'JOKE'
         Tell::Joke.call(twilio_number, recipient)
       end
-      # when 'VOTE'
-      #   Vote::Start.call(twilio_number, recipient)
-      # when 'EXIT'
-      #   Vote::Exit.call(twilio_number, recipient)
-      # else
-      #   Vote::Play.call(twilio_number, recipient)
-      # end
+      when 'VOTE'
+        Vote::Start.call(twilio_number, recipient)
+      when 'EXIT'
+        Vote::Exit.call(twilio_number, recipient)
+      else
+        Vote::Play.call(twilio_number, recipient)
+      end
     end
 
     private
