@@ -10,7 +10,7 @@ module Vote
     end
 
     def call
-      if sms.new_record?
+      if sms
         sms.destroy
         Twilio::SendMessage.call(@twilio_number, @recipient, "Voting reset. Send VOTE to start a new vote.")
       else
