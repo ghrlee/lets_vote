@@ -19,7 +19,7 @@ module Twilio
       when 'EXIT'
         Vote::Exit.call(twilio_number, recipient)
       else
-        Vote::Play.call(twilio_number, recipient)
+        Vote::Play.call(twilio_number, recipient, body)
       end
     end
 

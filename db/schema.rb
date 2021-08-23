@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_20_182202) do
+ActiveRecord::Schema.define(version: 2021_08_23_034358) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "polls", force: :cascade do |t|
+    t.string "question"
+    t.string "options", default: [], array: true
+    t.string "recipient_numbers", default: [], array: true
+    t.string "sender_number"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "sms_conversations", force: :cascade do |t|
     t.string "twilio_number"
