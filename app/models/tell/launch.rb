@@ -24,3 +24,4 @@ module Tell
       Twilio::SendMessage.call(@twilio_number, @recipient, message)
     end
   end
+end
