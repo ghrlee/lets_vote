@@ -13,6 +13,7 @@ module Tell
       message = <<~EOS
         MENU - This Menu\n
         VOTE - Vote in a poll\n
+        LAUNCH - Journey to Mars!\n
         EXIT - Destroy a session
       EOS
 

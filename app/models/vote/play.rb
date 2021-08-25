@@ -12,27 +12,7 @@ module Vote
 
     def call
       if sms
-        # if we have vote in progress 
-          # and if we get a question
-            # if we already have a question, this is invalid
-          # or if we get a set of options
-            # make sure we have a question
-          # or if we have a set of numbers
-            # make sure we have a question and options
-          # send question and options out to the set of numbers
-          # 
-
-          # if receiving a vote
-          # check that vote answer is in the vote array (vote <= options.length?)
-          # make sure voter only casts one vote??
-          # if last vote, destroy the session
-          # binding.pry
-            # save message as question?
-            # save new vote with message as question and @recipient as vote_sender
-
-
-          build_poll
-
+        build_poll
         # response = Vote::Choice.call(recipient, body)
       else
         Twilio::SendMessage.call(@twilio_number, @recipient, "Invalid command. Send MENU for a list of commands")
@@ -46,21 +26,58 @@ module Vote
     end
 
     def poll
-      @poll ||= Poll.find_by(sender_number: @twilio_number)
+      @poll ||= Poll.find_by(sender_number: @recipient)
     end
 
     def build_poll
-      if @body.ends_with?('?')
-        if poll && poll.question
-          response = "You already have a question in progress. Enter in a few options."
-        else
-          Poll.create(question: @body, sender_number: @recipient)
-          response = "What are the options?"
-        end
-
-        Twilio::SendMessage.call(@twilio_number, @recipient, response)
-
+      if is_question?
+        get_question
+      elsif is_phone_number
+        get_phone_numbers
+      else
+        get_options
       end
+    end
+
+    def get_question
+      if poll
+        response = "You already have a question in progress. Enter in a few options."
+      else
+        Poll.create(question: @body, sender_number: @recipient)
+        response = "What are the options? Separate each with a comma"
+      end
+      Twilio::SendMessage.call(@twilio_number, @recipient, response)
+    end
+
+    def get_options
+      if poll.options.any?
+        response = "You already have options. Enter in a numbers to send to."
+      else
+        response = "Great! Enter in some numbers"
+      end
+
+      Twilio::SendMessage.call(@twilio_number, @recipient, response)
+    end
+
+    def get_phone_numbers
+      if poll.recipient_numbers.any?
+        response = "You already have a question with phone number in progress. Enter in a few options."
+      elsif body.split.any?{|item| Phonelib.invalid?(item)}
+        invalid_numbers = body.split.select{|item| Phonelib.invalid?(item)}.join(', ')
+        response = "The numbers #{invalid_numbers} are not valid, please try again"
+      else
+        response = "Great! Sending your poll"
+        poll.update(recipient_numbers: body)
+      end
+      Twilio::SendMessage.call(@twilio_number, @recipient, response)
+    end
+
+    def is_question?
+      @body.ends_with?('?')
+    end
+  
+    def is_phone_number?
+      @body.split(',').any?{ |response_item| response_item.match(/^(\d)+$/) }
     end
   end
 end
