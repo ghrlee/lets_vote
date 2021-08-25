@@ -1,5 +1,7 @@
 module Vote
   class Play
+    attr_reader :body
+
     def self.call(twilio_number, recipient, body)
       new(twilio_number, recipient, body).call
     end
@@ -40,9 +42,9 @@ module Vote
 
     def get_question
       if poll
-        response = "You already have a question in progress. Enter in a few options."
+        response = "You already have a question in progress."
       else
-        Poll.create(question: @body, sender_number: @recipient)
+        Poll.create(question: body, sender_number: @recipient)
         response = "What are the options? Separate each with a comma"
       end
       Twilio::SendMessage.call(@twilio_number, @recipient, response)
@@ -50,11 +52,10 @@ module Vote
 
     def get_options
       if poll.options.any?
-        response = "You already have options. Enter in a numbers to send to."
-      elsif body.upcase.strip == "RESET" || "EXIT"
-        poll.destroy
-        response =  "Voting reset. Send VOTE to start a new vote."
+        response = "You already have options."
       else
+        options = body.split(', ')
+        poll.update(options: options)
         response = "Great! Enter in some numbers"
       end
 
@@ -63,23 +64,26 @@ module Vote
 
     def get_phone_numbers
       if poll.recipient_numbers.any?
-        response = "You already have a question with phone number in progress. Enter in a few options."
+        response = "You already have a question with phone number in progress."
       elsif body.split.any?{|item| Phonelib.invalid?(item)}
         invalid_numbers = body.split.select{|item| Phonelib.invalid?(item)}.join(', ')
         response = "The numbers #{invalid_numbers} are not valid, please try again"
       else
         response = "Great! Sending your poll"
-        poll.update(recipient_numbers: body)
+        numbers = body.split(', ')
+        poll.update(recipient_numbers: numbers)
+
       end
+      # new service
       Twilio::SendMessage.call(@twilio_number, @recipient, response)
     end
 
     def is_question?
-      @body.ends_with?('?')
+      body.ends_with?('?')
     end
   
     def is_phone_number?
-      @body.split(',').any?{ |response_item| response_item.match(/^(\d)+$/) }
+      body.split(',').any?{ |response_item| response_item.match(/^(\d)+$/) }
     end
   end
 end
