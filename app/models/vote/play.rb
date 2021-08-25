@@ -31,7 +31,7 @@ module Vote
     def build_poll
       if is_question?
         get_question
-      elsif is_phone_number
+      elsif is_phone_number?
         get_phone_numbers
       else
         get_options
