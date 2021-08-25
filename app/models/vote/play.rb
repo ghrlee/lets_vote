@@ -13,7 +13,6 @@ module Vote
     def call
       if sms
         build_poll
-        # response = Vote::Choice.call(recipient, body)
       else
         Twilio::SendMessage.call(@twilio_number, @recipient, "Invalid command. Send MENU for a list of commands")
       end
@@ -52,6 +51,9 @@ module Vote
     def get_options
       if poll.options.any?
         response = "You already have options. Enter in a numbers to send to."
+      elsif body.upcase.strip == "RESET" || "EXIT"
+        poll.destroy
+        response =  "Voting reset. Send VOTE to start a new vote."
       else
         response = "Great! Enter in some numbers"
       end

@@ -12,7 +12,7 @@ module Vote
     def call
       if sms.new_record?
         sms.save
-        Twilio::SendMessage.call(@twilio_number, @recipient, "Enter a question to vote on")
+        Twilio::SendMessage.call(@twilio_number, @recipient, "Enter a question to vote on. Type RESET to start over.")
       else
         Twilio::SendMessage.call(@twilio_number, @recipient, "You already have a session in progress")
       end
