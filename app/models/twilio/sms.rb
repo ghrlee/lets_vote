@@ -20,6 +20,9 @@ module Twilio
         Vote::Start.call(twilio_number, recipient)
       when 'EXIT'
         Vote::Exit.call(twilio_number, recipient)
+      when /\b[1-9]\b/
+        # if no poll, message for that
+        Tell::ReceivePoll.call(twilio_number, recipient, body)
       else
         Vote::Play.call(twilio_number, recipient, body)
       end

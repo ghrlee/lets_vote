@@ -74,8 +74,9 @@ module Vote
         poll.update(recipient_numbers: numbers)
 
       end
-      # new service
       Twilio::SendMessage.call(@twilio_number, @recipient, response)
+      Tell::SendPoll.call(@twilio_number, poll)
+      sms.destroy
     end
 
     def is_question?
