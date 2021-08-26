@@ -27,7 +27,6 @@ module Tell
     def calculate_results
       poll.update_attribute(:received_votes, poll.received_votes << @body)
       if poll.received_votes.count >= poll.recipient_numbers.count
-        binding.pry
         winning_option = find_winning_option(poll.received_votes)
         message = "Thanks for voting! The winner is \"#{poll.options[winning_option]}\""
         poll.recipient_numbers.each do |receiver|
